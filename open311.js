@@ -92,7 +92,7 @@ app.get('/discovery.:format', function(req,res) {
 //GET /requests/[id].[format]
 // http://wiki.open311.org/GeoReport_v2#GET_Service_Request
 app.get('/requests/:uid.:format', function(req,res) {
-	var request = http.request({hostname:'data.cityofnewyork.us',port:80,path:'/resource/erm2-nwe9.json?$where=unique_key=%27'+req.params.uid+'%27',method:'GET'}, function(response) {
+	var request = http.request({hostname:'bcpxy.nycnet',port:8080,path:'https://data.cityofnewyork.us/resource/erm2-nwe9.json?$where=unique_key=%27'+req.params.uid+'%27',method:'GET', headers: {Host: "data.cityofnewyork.us"}}, function(response) {
 		var responseBody = '';
 		response.on('data', function(chunk) {
 			responseBody += chunk;
