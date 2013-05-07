@@ -104,8 +104,6 @@ app.get('/requests/:uid.:format', function(req,res) {
 	request.end();
 });
 
-
-
 //GET /requests.[format]?
 //  http://wiki.open311.org/GeoReport_v2#GET_Service_Requests
 //   service_request_id: comma-delimited
@@ -113,6 +111,36 @@ app.get('/requests/:uid.:format', function(req,res) {
 //   start_date: earliest, must not be more than 90 days from end_date
 //   end_date: latest, must not be more than 90 days from start_date
 //   status: comma-delimited ['open','closed']
+app.get('/requests.:format?', function(req,res) {
+	if (req.query.service_request_id) {
+		var srIds = req.query.service_request_id.split(',');
+		var whereClause = '$where=';
+		// loop through and append to the $where clause
+		srIds.forEach(function(srId) {
+			whereClause += 'unique_key=%27' + srId + '%27%20OR%20';
+		});
+		var requestOptions = {
+			hostname: 'data.cityofnewyork.us',
+			port: 80,
+			// remove the last %20OR%20 and add it to the request path
+			path: '/resource/erm2-nwe9.json?' + whereClause.slice(0,-8),
+			method: 'GET'
+		}
+		var request = http.request(requestOptions, function(response) {
+			var responseBody = '';
+			response.on('data', function(chunk) {
+				responseBody += chunk;
+			});
+			response.on('end', function() {
+				output(convertToOpen311(JSON.parse(responseBody)),'service_requests',res,req.params.format);
+			});
+		});
+		request.end();
+	} else {
+		res.send(404);
+	}
+});
+
 
 //http response errors:
 //	 403 missing API key
