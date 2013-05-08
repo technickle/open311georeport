@@ -4,7 +4,7 @@ A nodejs adapter to access [NYC 311 SRs from Socrata](http://data.cityofnewyork.
 
 Getting started
 -------------------------
-1. (fork)[https://github.com/technickle/open311georeport/fork] / clone this repository
+1. [fork](https://github.com/technickle/open311georeport/fork) / clone this repository
 2. install the [latest version of nodejs](http://nodejs.org/)
 3. install [expressjs](http://expressjs.com/)
 
