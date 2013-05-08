@@ -1,6 +1,6 @@
 open311georeport
 ================
-A nodejs adapter to access NYC 311 SRs from Socrata, using the Open311 GeoReport v2 API.
+A nodejs adapter to access [NYC 311 SRs from Socrata](http://data.cityofnewyork.us/d/erm2-nwe9), using the [Open311 GeoReport v2 API](http://wiki.open311.org/GeoReport_v2).
 
 Getting started
 -------------------------
