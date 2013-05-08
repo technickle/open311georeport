@@ -7,13 +7,21 @@ Getting started
 1. fork and clone this repository
 2. you will need the [latest version of nodejs](http://nodejs.org/)
 3. install [expressjs](http://expressjs.com/)
+
         npm install express
+
 4. install [easyxml](https://github.com/QuickenLoans/node-easyxml)
+
         npm install easyxml
+
 5. run the server.
+
 		node open311.js
+
 6. make query the server (by default it listens on port 5000)
+
 		curl -v localhost:5000/requests/25452652.xml
+
 7. make your code changes, and issue a pull request back to this repository
 
 Known issues
