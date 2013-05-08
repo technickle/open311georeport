@@ -18,11 +18,14 @@ Getting started
 
 		node open311.js
 
-6. make query the server (by default it listens on port 5000)
+6. make queries to the server (by default it listens on port 5000)
 
+		curl -v localhost:5000/requests/25454885.json
 		curl -v localhost:5000/requests/25452652.xml
+		curl -v localhost:5000/requests.json?service_request_id=25452652,25454885
 
-7. make your code changes, and issue a pull request back to this repository
+7. See the [open311 georeport v2 documentation](http://wiki.open311.org/GeoReport_v2#GET_Service_Requests).
+8. make your code changes, and issue a pull request back to this repository
 
 Known issues
 -------------------------
