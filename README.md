@@ -14,15 +14,16 @@ Getting started
 
 4. Launch the API server. (You may need to sudo if your login doesn't have permission to set up a network listener.)
 
-    node server.js
-    sudo node server.js
+        node server.js
+        sudo node server.js
 
 5. make queries to the server (by default it listens on port 3000)
 
         curl -v localhost:3000/discovery.xml
-    curl -v localhost:3000/requests/25454885.json
-    curl -v localhost:3000/requests/25452652.xml
-    curl -v localhost:3000/requests.json?service_request_id=25452652,25454885
+        curl -v localhost:3000/requests/25454885.json
+        curl -v localhost:3000/requests/25452652.xml
+        curl -v localhost:3000/requests.json?service_request_id=25452652,25454885
+        
 
 Contributing
 -------------------------
@@ -32,7 +33,7 @@ Contributing
 2. Add your code into the lib folder
 
 3. Send a pull request.
-  
+
 
 Known issues / To-dos
 -------------------------
