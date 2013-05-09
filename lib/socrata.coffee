@@ -1,18 +1,17 @@
 module.exports = (app) ->
   class app.Socrata
-    initialize: (res, req)->
-      [@res, @req] = [res, req]
-
-      @srIds = if req.query.service_request_id
-          req.query.service_request_id.split(",")
-        else
-          null
+    constructor: (res, req)->
+      @res = res
+      @req = req
+      sri = req.query.service_request_id
+      @srIds = if sri then sri.split(",") else []
 
     fetchData: (requestOptions)->
       [res, req] = [@res, @req]
 
       # TODO: evaluate the other parameters and check for validity
       # TODO: construct SODA query
+      http = require 'http'
       request = http.request(requestOptions, (response) ->
         responseBody = ""
         response.on "data", (chunk) ->
@@ -23,31 +22,24 @@ module.exports = (app) ->
       )
       request.end()
 
-    buildRequest: (type="index")->
-      @type = type
-      @requestOptions = switch type
-        when "index"
-          @_indexReqOpts()
-        when "show"
-          @_showReqOpts()
-
-    respond: ->
+    respondWith: (requestOptions)->
       if @_noIdsGiven()
         # Return early
         @res.send 404
         return
       else
         # Proceed to fetch the data.
-        @fetchData(requestOptions)
+        @fetchData requestOptions
 
     _noIdsGiven: ->
-      @srIds is null and @type is "index"
+      @srIds.length is 0 and @type is "index"
 
-    _showReqOpts: ->
-      requestPath = "/resource/erm2-nwe9.json?$where=unique_key=%27" + @req.params.uid + "%27"
+    buildShowReqOpts: (req)->
+      uid = req.params.uid
+      requestPath = "/resource/erm2-nwe9.json?$where=unique_key=%27#{uid}%27"
       @_reqOpts(requestPath)
 
-    _indexReqOpts: ->
+    buildIndexReqOpts: (req)->
       whereClause = "$where="
       # Loop through and append to the $where clause
       @srIds.forEach (srId) ->
