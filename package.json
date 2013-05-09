@@ -3,34 +3,35 @@
   , "version": "0.0.1"
   , "description": "A nodejs adapter to access NYC 311 SRs from Socrata, using the Open311 GeoReport v2 API."
   , "dependencies": {
-        "express": "3.0.0beta4"
-      , "express-partials": ">= 0.0.5"
-      , "ejs": "*"
-      , "stylus": "*"
-      , "coffee-script": "*"
-      , "easyxml": "~0.0.4"
-      , "express": "~3.2.3"
-    },
-  "devDependencies": {
+      "express": "3.0.0beta4"
+    , "express-partials": ">= 0.0.5"
+    , "ejs": "*"
+    , "stylus": "*"
+    , "coffee-script": "*"
+    , "easyxml": "~0.0.4"
+    , "express": "~3.2.3"
+  }
+  , "devDependencies": {
     "vows": "0.5.x"
   }
   , "scripts": {
       "start": "server.js"
-    }
+    , "test": "cake test"
+  }
   , "engines": {
-        "node": "0.8.14"
-      , "npm": "1.1.x"
-    }
+      "node": "0.8.14"
+    , "npm": "1.1.x"
+  }
   , "repository": {
-    "type": "git",
-    "url": "git://github.com/technickle/open311georeport.git"
-  },
-  "keywords": [
-    "opendata",
-    "311",
-    "nyc"
-  ],
-  "author": "Andrew Nicklin",
-  "license": "MIT",
-  "readmeFilename": "README.md"
+      "type": "git"
+    , "url": "git://github.com/technickle/open311georeport.git"
+  }
+  , "keywords": [
+      "opendata",
+    , "311"
+    , "nyc"
+  ]
+  , "author": "Andrew Nicklin"
+  , "license": "MIT"
+  , "readmeFilename": "README.md"
 }
