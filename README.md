@@ -17,13 +17,13 @@ Getting started
         node server.js
         sudo node server.js
 
-5. make queries to the server (by default it listens on port 3000)
+5. Make queries to the server (by default it listens on port 3000)
 
         curl -v localhost:3000/discovery.xml
         curl -v localhost:3000/requests/25454885.json
         curl -v localhost:3000/requests/25452652.xml
         curl -v localhost:3000/requests.json?service_request_id=25452652,25454885
-        
+
 
 Contributing
 -------------------------
@@ -37,6 +37,6 @@ Contributing
 
 Known issues / To-dos
 -------------------------
-* does not handle placename locations correctly yet
-* the Open311 entity models are inconsistent between XML and JSON, especially when it comes to arrays. So the present output works well for JSON but the XML output is not 100% compliant. There isn't really a way to fix this with the default implementation of easyXML.
-* ideally the code should be refactored to work more asynchronously, e.g. start the output while continuing to process input from Socrata. The Open311 spec allows for the processing of up to 1000 records per request, which will EASILY be achieved given NYC's volume of 40,000 SR updates per day.
+* Does not handle placename locations correctly yet
+* The Open311 entity models are inconsistent between XML and JSON, especially when it comes to arrays. So the present output works well for JSON but the XML output is not 100% compliant. There isn't really a way to fix this with the default implementation of easyXML.
+* Ideally the code should be refactored to work more asynchronously, e.g. start the output while continuing to process input from Socrata. The Open311 spec allows for the processing of up to 1000 records per request, which will EASILY be achieved given NYC's volume of 40,000 SR updates per day.
