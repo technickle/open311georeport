@@ -1,11 +1,11 @@
 module.exports = (app) ->
   class app.ApplicationController
-
+    
     # GET /
     @index = (req, res) ->
       res.render 'index',
         view: 'index'
-        
+
     # GET /discovery.[format]
     # http://wiki.open311.org/Service_Discovery
     @discovery = (req, res) ->
@@ -21,4 +21,3 @@ module.exports = (app) ->
           formats: ["text/xml", "application/json"]
         ]
       output discovery, "discovery", res, req.params.format
-
