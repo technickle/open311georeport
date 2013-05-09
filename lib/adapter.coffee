@@ -11,41 +11,30 @@
 #       # Your code
 #
 # Usage: new app.MyCustomClass(args)
-xmlout = require("easyxml")
-xmlout.config.manifest = true
 
 #http response errors:
 #  403 missing API key
 #   400 invalid request
 #   404 resource doesn't exist
-# app.listen process.env.PORT or 5000
+
 
 module.exports = (app) ->
-  class app.Open311Adapter
-    initialize: ->
+  class app.Adapter
+    initialize: (responseBody)->
+      socrata = JSON.parse(responseBody)
+      @response = @convertToOpen311(socrata)
 
-    # Configure easyxml to output <?xml ... ?> as the first line
-    # helper function to output xml or json
-    # really should fix this so it doesn't process queries first
-    output: (obj,rootElement,res,format)->
-      # if obj has no elements then return a 404 error!
-      if obj.length is 0
-        res.send 404, "not found"
-      else
-        switch format
-          when "json"
-            res.type = "application/json"
-            res.send obj
-          when "xml" #TODO: fix XML output in SR array <0>,<1> etc*********
-            res.setHeader "Content-Type", "text/xml; charset=utf-8"
-            res.send xmlout.render(obj, rootElement)
-          else
-            res.send 404, ".xml or .json expected"
+    respond: (res, req)->
+      output @response, "service_requests", res, req.params.format
 
-    # Helper function to parse an array of socrata dataset records into an Open311-compatible output
-    convertToOpen311: (srArray) ->
+    # Transform Socrata data into Open311 data
+    #
+    # socrata - Array
+    #
+    # Returns array
+    convertToOpen311: (socrata) ->
       results = []
-      srArray.forEach (obj) ->
+      socrata.forEach (obj) ->
         address = undefined
         switch obj.address_type
           when "ADDRESS"
@@ -75,6 +64,3 @@ module.exports = (app) ->
           long: obj.longitude or null #quoted because long is a JS type
           media_url: null
       results
-
-
-
