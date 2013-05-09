@@ -3,7 +3,7 @@ express = require 'express'
 http = require 'http'
 partials = require 'express-partials'
 app = express()
-  
+
 # Boot setup
 require("#{__dirname}/../config/boot")(app)
 
@@ -16,7 +16,7 @@ app.configure ->
   app.set 'port', port
   app.set 'views', "#{__dirname}/views"
   app.set 'view engine', 'ejs'
-  app.use express.static("#{__dirname}/../public")
+  # app.use express.static("#{__dirname}/../public")
   app.use express.favicon()
   app.use express.logger('dev')
   app.use express.bodyParser()
