@@ -1,15 +1,15 @@
 module.exports = (app) ->
   class app.Socrata
     initialize: (res, req)->
-      @res = res
-      @req = req
+      [@res, @req] = [res, req]
+
       @srIds = if req.query.service_request_id
           req.query.service_request_id.split(",")
         else
           null
 
-    fetchData: (res, req)->
-      requestOptions = @_buildReqOpts()
+    fetchData: (requestOptions)->
+      [res, req] = [@res, @req]
 
       # TODO: evaluate the other parameters and check for validity
       # TODO: construct SODA query
@@ -23,21 +23,39 @@ module.exports = (app) ->
       )
       request.end()
 
-    respond: ->
-      if @srIds
-        @fetchData(@res, @req)
-      else
-        @res.send 404
+    respond: (type)->
+      requestOptions = switch type
+        when "index"
+          @_indexReqOpts()
+        when "show"
+          @_showReqOpts()
 
-    _buildReqOpts: ->
+      # Return eraly if no ids are specified for the index request
+      if @srIds is null and type is "index"
+        @res.send 404
+        return
+
+      # For all others, proceed to fetch the data.
+      @fetchData(requestOptions)
+
+    _showReqOpts: ->
+      {
+        hostname: "data.cityofnewyork.us"
+        port: 80
+        path: "/resource/erm2-nwe9.json?$where=unique_key=%27" + @req.params.uid + "%27"
+        method: "GET"
+      }
+
+    _indexReqOpts: ->
       whereClause = "$where="
-      # loop through and append to the $where clause
+
+      # Loop through and append to the $where clause
       @srIds.forEach (srId) ->
         whereClause += "unique_key=%27" + srId + "%27%20OR%20"
-
+      # Remove the last %20OR%20
+      lastOr = whereClause.slice(0, -8)
       requestOptions =
         hostname: "data.cityofnewyork.us"
         port: 80
-        # remove the last %20OR%20 and add it to the request path
-        path: "/resource/erm2-nwe9.json?" + whereClause.slice(0, -8)
+        path: "/resource/erm2-nwe9.json?" + lastOr
         method: "GET"
