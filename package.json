@@ -12,7 +12,8 @@
     , "express": "~3.2.3"
   }
   , "devDependencies": {
-    "vows": "0.5.x"
+      "vows": "0.5.x"
+    , "mocha" : "*"
   }
   , "scripts": {
       "start": "server.js"
@@ -27,7 +28,7 @@
     , "url": "git://github.com/technickle/open311georeport.git"
   }
   , "keywords": [
-      "opendata",
+      "opendata"
     , "311"
     , "nyc"
   ]
