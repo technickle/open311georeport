@@ -5,7 +5,8 @@ module.exports = (app) ->
     # http://wiki.open311.org/GeoReport_v2#GET_Service_Request
     @index = (req, res) ->
       socrata = new app.Socrata(res, req)
-      socrata.respond("index")
+      requestOptions = socrata.buildIndexReqOpts()
+      socrata.respondWith(requestOptions)
 
     # GET /requests/[id].[format]
     #
@@ -21,4 +22,5 @@ module.exports = (app) ->
     #   status             - comma-delimited ['open','closed']
     @show = (req, res) ->
       socrata = new app.Socrata(res, req)
-      socrata.respond("show")
+      requestOptions = socrata.buildShowReqOpts()
+      socrata.respondWith(requestOptions)
