@@ -23,39 +23,44 @@ module.exports = (app) ->
       )
       request.end()
 
-    respond: (type)->
-      requestOptions = switch type
+    buildRequest: (type="index")->
+      @type = type
+      @requestOptions = switch type
         when "index"
           @_indexReqOpts()
         when "show"
           @_showReqOpts()
 
-      # Return eraly if no ids are specified for the index request
-      if @srIds is null and type is "index"
+    respond: ->
+      if @_noIdsGiven()
+        # Return early
         @res.send 404
         return
+      else
+        # Proceed to fetch the data.
+        @fetchData(requestOptions)
 
-      # For all others, proceed to fetch the data.
-      @fetchData(requestOptions)
+    _noIdsGiven: ->
+      @srIds is null and @type is "index"
 
     _showReqOpts: ->
-      {
-        hostname: "data.cityofnewyork.us"
-        port: 80
-        path: "/resource/erm2-nwe9.json?$where=unique_key=%27" + @req.params.uid + "%27"
-        method: "GET"
-      }
+      requestPath = "/resource/erm2-nwe9.json?$where=unique_key=%27" + @req.params.uid + "%27"
+      @_reqOpts(requestPath)
 
     _indexReqOpts: ->
       whereClause = "$where="
-
       # Loop through and append to the $where clause
       @srIds.forEach (srId) ->
-        whereClause += "unique_key=%27" + srId + "%27%20OR%20"
+        whereClause += "unique_key=%27#{srId}%27%20OR%20"
       # Remove the last %20OR%20
       lastOr = whereClause.slice(0, -8)
-      requestOptions =
+      requestPath = "/resource/erm2-nwe9.json?" + lastOr
+      @_reqOpts(requestPath)
+
+    _reqOpts: (requestPath)->
+      {
         hostname: "data.cityofnewyork.us"
         port: 80
-        path: "/resource/erm2-nwe9.json?" + lastOr
+        path: requestPath
         method: "GET"
+      }
