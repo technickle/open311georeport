@@ -1,6 +1,9 @@
 module.exports = (app) ->
-  # Index
   app.get '/', app.ApplicationController.index
+  app.get '/requests.:format?', app.RequestsController.index
+  app.get '/requests/:uid.:format', app.RequestsController.show
+  
+
 
   # Error handling (No previous route found. Assuming it’s a 404)
   app.get '/*', (req, res) ->
