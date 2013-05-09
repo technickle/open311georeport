@@ -3,7 +3,7 @@ express = require 'express'
 http = require 'http'
 partials = require 'express-partials'
 app = express()
-
+  
 # Boot setup
 require("#{__dirname}/../config/boot")(app)
 
