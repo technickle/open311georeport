@@ -13,7 +13,6 @@ module.exports = (app) ->
     # Parse the request parameters and send them along to Socrata.
     #
     # see: http://wiki.open311.org/GeoReport_v2#GET_Service_Requests
-    #
     # Arguments:
     #   service_request_id - comma-delimited
     #   service_code       - [default to all]
