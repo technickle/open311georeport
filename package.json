@@ -4,6 +4,7 @@
   , "description": "A nodejs adapter to access NYC 311 SRs from Socrata, using the Open311 GeoReport v2 API."
   , "dependencies": {
       "express": "3.0.0beta4"
+    , "connect-assets": "2.1.x"
     , "express-partials": ">= 0.0.5"
     , "ejs": "*"
     , "stylus": "*"

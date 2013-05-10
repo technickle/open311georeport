@@ -22,6 +22,7 @@ app.configure ->
   app.use express.bodyParser()
   app.use express.methodOverride()
   app.use partials()
+  app.use require('connect-assets')(src: "#{__dirname}/assets")
   app.use app.router
 
 app.configure 'development', ->
