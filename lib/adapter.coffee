@@ -20,12 +20,12 @@
 
 module.exports = (app) ->
   class app.Adapter
-    initialize: (responseBody)->
+    constructor: (responseBody)->
       socrata = JSON.parse(responseBody)
       @response = @convertToOpen311(socrata)
 
     respond: (res, req)->
-      output @response, "service_requests", res, req.params.format
+      app.helpers.output @response, "service_requests", res, req.params.format
 
     # Transform Socrata data into Open311 data
     #

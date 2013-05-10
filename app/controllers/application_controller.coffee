@@ -1,6 +1,6 @@
 module.exports = (app) ->
   class app.ApplicationController
-    
+
     # GET /
     @index = (req, res) ->
       res.render 'index',
@@ -20,4 +20,4 @@ module.exports = (app) ->
           type: "production"
           formats: ["text/xml", "application/json"]
         ]
-      output discovery, "discovery", res, req.params.format
+      app.helpers.output discovery, "discovery", res, req.params.format
