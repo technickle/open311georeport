@@ -11,10 +11,10 @@
     , "coffee-script": "*"
     , "easyxml": "~0.0.4"
     , "express": "~3.2.3"
+    , "swagger-jack": "1.0.0"
   }
   , "devDependencies": {
       "vows": "0.5.x"
-    , "swagger-jack": "1.0.0"
     , "mocha" : "*"
   }
   , "scripts": {
