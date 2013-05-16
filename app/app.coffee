@@ -3,6 +3,7 @@ express = require 'express'
 http = require 'http'
 partials = require 'express-partials'
 app = express()
+swagger = require('swagger-jack')
 
 # Boot setup
 require("#{__dirname}/../config/boot")(app)
@@ -24,6 +25,29 @@ app.configure ->
   app.use partials()
   app.use require('connect-assets')(src: "#{__dirname}/assets")
   app.use app.router
+  # gen = swagger.generator(app, { apiVersion: '1.0', basePath: 'http://localhost:3000/'}, [{
+  #           api:
+  #             resourcePath: '/requests'
+  #             apis: [
+  #               path: '/'
+  #               operations: [
+  #                 {
+  #                   httpMethod: 'GET'
+  #                   nickname: 'show'
+  #                 }
+  #                 {
+  #                   httpMethod: 'GET'
+  #                   nickname: 'index'
+  #                 }
+  #               ]
+  #             ]
+  #           controller:
+  #             show: app.RequestsController.show
+  #             index: app.RequestsController.index
+  #         }])
+  # app.use(gen)
+  # app.use(swagger.validator(app))
+  # app.use(swagger.errorHandler())
 
 app.configure 'development', ->
   app.use express.errorHandler()
