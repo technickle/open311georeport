@@ -3,7 +3,7 @@ express = require 'express'
 http = require 'http'
 partials = require 'express-partials'
 app = express()
-swagger = require('swagger-jack')
+# swagger = require('swagger-jack')
 
 # Boot setup
 require("#{__dirname}/../config/boot")(app)
