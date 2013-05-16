@@ -4,7 +4,7 @@ module.exports = (app) ->
   app.get '/requests/:uid.:format', app.RequestsController.show
   app.get '/discovery.:format', app.ApplicationController.discovery
 
-  
+
   # Error handling (No previous route found. Assuming it’s a 404)
   app.get '/*', (req, res) ->
     NotFound res

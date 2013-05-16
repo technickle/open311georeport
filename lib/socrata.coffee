@@ -5,10 +5,10 @@ module.exports = (app) ->
       @req = req
       sri = req.query.service_request_id
       @srIds = if sri then sri.split(",") else []
-      
+
     fetchData: (requestOptions)->
       [res, req] = [@res, @req]
-
+      
       # TODO: evaluate the other parameters and check for validity
       # TODO: construct SODA query
       http = require 'http'
