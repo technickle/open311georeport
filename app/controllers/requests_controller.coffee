@@ -3,7 +3,7 @@ module.exports = (app) ->
     # GET /requests.[format]?
     #
     # http://wiki.open311.org/GeoReport_v2#GET_Service_Request
-    @index = (req, res) ->
+    @getRequestsList = (req, res) ->
       socrata = new app.Socrata(res, req)
       requestOptions = socrata.buildIndexReqOpts(req)
       socrata.respondWith(requestOptions)
