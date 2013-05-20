@@ -1,6 +1,6 @@
 module.exports = (app) ->
   app.get '/', app.ApplicationController.index
-  app.get '/requests.:format?', app.RequestsController.getRequestsList
+  app.get '/requests.:format?', app.RequestsController.getServiceRequests
   app.get '/requests/:uid.:format', app.RequestsController.show
   app.get '/discovery.:format', app.ApplicationController.discovery
 
