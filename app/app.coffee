@@ -9,6 +9,16 @@ yaml = require('js-yaml')
 # Boot setup
 require("#{__dirname}/../config/boot")(app)
 
+configureSwagger = (env)->
+  descriptor = require("#{__dirname}/../api/#{env}.yml")
+  resources = [{
+      api: require("#{__dirname}/../api/requests.yml")
+      controller: app.RequestsController
+    }]
+  app.use(swagger.generator(app, descriptor, resources))
+  app.use(swagger.validator(app))
+  app.use(swagger.errorHandler())
+
 # Configuration
 app.configure ->
   port = process.env.PORT || 3000
@@ -26,18 +36,12 @@ app.configure ->
   app.use partials()
   app.use require('connect-assets')(src: "#{__dirname}/assets")
   app.use app.router
-  # API configuration
-  descriptor = require("#{__dirname}/../api/general.yml")
-  resources = [{
-      api: require("#{__dirname}/../api/requests.yml")
-      controller: app.RequestsController
-    }]
-  app.use(swagger.generator(app, descriptor, resources))
-  app.use(swagger.validator(app))
-  app.use(swagger.errorHandler())
-  # /API configuration
+
+app.configure 'production', ->
+  configureSwagger("production")
 
 app.configure 'development', ->
+  configureSwagger("development")
   app.use express.errorHandler()
 
 # Routes
