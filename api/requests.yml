@@ -1,7 +1,7 @@
 resourcePath: '/requests'
 apis:
   -
-    path: '/requests'
+    path: '/requests.json'
     operations:
       -
         httpMethod: 'GET'
@@ -16,6 +16,7 @@ apis:
             required: true
             dataType: "string"
             description: "The unique ID of the service request created."
+            allowMultiple: true
           -
             paramType: "query"
             name: "service_code"
