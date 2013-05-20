@@ -1,4 +1,6 @@
 module.exports = (app) ->
+  app.currentEnv = process.env.NODE_ENV or 'development'
+
   # Helpers
   app.helpers = require "#{__dirname}/../app/helpers"
 

@@ -36,12 +36,10 @@ app.configure ->
   app.use partials()
   app.use require('connect-assets')(src: "#{__dirname}/assets")
   app.use app.router
-
-app.configure 'production', ->
-  configureSwagger("production")
+  configureSwagger(app.currentEnv)
+  
 
 app.configure 'development', ->
-  configureSwagger("development")
   app.use express.errorHandler()
 
 # Routes
