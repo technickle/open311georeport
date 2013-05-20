@@ -52,13 +52,3 @@ module.exports = (app) ->
         method: "GET"
       }
 
-    buildIndexReqOpts: (ids, req)->
-      @srIds = ids
-      whereClause = "$where="
-      # Loop through and append to the $where clause
-      ids.forEach (srId) ->
-        whereClause += "unique_key=%27#{srId}%27%20OR%20"
-      # Remove the last %20OR%20
-      lastOr = whereClause.slice(0, -8)
-      path = "#{@basePath}?#{lastOr}"
-      @_reqOpts(path)
