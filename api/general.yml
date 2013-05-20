@@ -1,2 +1,2 @@
 apiVersion: '1.0'
-basePath: 'http://localhost:3000/api'
+basePath: 'http://localhost:3000'
