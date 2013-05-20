@@ -5,10 +5,11 @@ module.exports = (app) ->
       @req = req
       sri = req.query.service_request_id
       @srIds = if sri then sri.split(",") else []
+      @basePath = "/resource/erm2-nwe9.json?"
 
     fetchData: (requestOptions)->
       [res, req] = [@res, @req]
-      
+
       # TODO: evaluate the other parameters and check for validity
       # TODO: construct SODA query
       http = require 'http'
@@ -36,7 +37,7 @@ module.exports = (app) ->
 
     buildShowReqOpts: (req)->
       uid = req.params.uid
-      requestPath = "/resource/erm2-nwe9.json?$where=unique_key=%27#{uid}%27"
+      requestPath = "#{@basePath}?$where=unique_key=%27#{uid}%27"
       @_reqOpts(requestPath)
 
     buildIndexReqOpts: (req)->
@@ -46,7 +47,7 @@ module.exports = (app) ->
         whereClause += "unique_key=%27#{srId}%27%20OR%20"
       # Remove the last %20OR%20
       lastOr = whereClause.slice(0, -8)
-      requestPath = "/resource/erm2-nwe9.json?" + lastOr
+      requestPath = "#{@basePath}?#{lastOr}"
       @_reqOpts(requestPath)
 
     _reqOpts: (requestPath)->
