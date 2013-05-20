@@ -22,7 +22,7 @@ module.exports = (app) ->
       )
       request.end()
 
-    respondWith: (requestOptions)->
+    callWith: (requestOptions)->
       if @_noIdsGiven()
         # Return early
         @res.send 404
@@ -31,9 +31,7 @@ module.exports = (app) ->
         # Proceed to fetch the data.
         @fetchData requestOptions
 
-    _noIdsGiven: -> @srIds.length is 0
-
-    buildRequestOpts: (ids=[])->
+    buildRequest: (ids=[])->
       @srIds = ids
       single_quoted_ids = _.map ids, (id)-> "%27#{id}%27"
       unique_keyed_ids  = _.map single_quoted_ids, (id)->"unique_key=#{id}"
@@ -41,10 +39,13 @@ module.exports = (app) ->
       params            = joined_keys
       query             = "$where=" + params
       path              = "#{@basePath}?#{query}"
-      @_reqOpts(path)
+      @_request(path)
+      
+    #### Private #####
 
+    _noIdsGiven: -> @srIds.length is 0
 
-    _reqOpts: (path)->
+    _request: (path)->
       {
         hostname: "data.cityofnewyork.us"
         port: 80
