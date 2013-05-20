@@ -12,6 +12,7 @@
     , "easyxml": "~0.0.4"
     , "express": "~3.2.3"
     , "swagger-jack": "*"
+    , "js-yaml": "*"
   }
   , "devDependencies": {
       "vows": "0.5.x"
