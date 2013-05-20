@@ -22,6 +22,7 @@ module.exports = (app) ->
   class app.Adapter
     constructor: (responseBody)->
       socrata = JSON.parse(responseBody)
+      # console.log(socrata)
       @response = @convertToOpen311(socrata)
 
     respond: (res, req)->

@@ -1,11 +1,10 @@
+_ = require("underscore")
 module.exports = (app) ->
   class app.Socrata
     constructor: (res, req)->
       @res = res
       @req = req
-      sri = req.query.service_request_id
-      @srIds = if sri then sri.split(",") else []
-      @basePath = "/resource/erm2-nwe9.json?"
+      @basePath = "/resource/erm2-nwe9.json"
 
     fetchData: (requestOptions)->
       [res, req] = [@res, @req]
@@ -32,28 +31,34 @@ module.exports = (app) ->
         # Proceed to fetch the data.
         @fetchData requestOptions
 
-    _noIdsGiven: ->
-      @srIds.length is 0 and @type is "index"
+    _noIdsGiven: -> @srIds.length is 0
 
-    buildShowReqOpts: (req)->
-      uid = req.params.uid
-      requestPath = "#{@basePath}?$where=unique_key=%27#{uid}%27"
-      @_reqOpts(requestPath)
+    buildRequestOpts: (ids=[])->
+      @srIds = ids
+      single_quoted_ids = _.map ids, (id)-> "%27#{id}%27"
+      unique_keyed_ids  = _.map single_quoted_ids, (id)->"unique_key=#{id}"
+      joined_keys        = unique_keyed_ids.join('%20OR%20')
+      params            = joined_keys
+      query             = "$where=" + params
+      path              = "#{@basePath}?#{query}"
+      @_reqOpts(path)
 
-    buildIndexReqOpts: (req)->
-      whereClause = "$where="
-      # Loop through and append to the $where clause
-      @srIds.forEach (srId) ->
-        whereClause += "unique_key=%27#{srId}%27%20OR%20"
-      # Remove the last %20OR%20
-      lastOr = whereClause.slice(0, -8)
-      requestPath = "#{@basePath}?#{lastOr}"
-      @_reqOpts(requestPath)
 
-    _reqOpts: (requestPath)->
+    _reqOpts: (path)->
       {
         hostname: "data.cityofnewyork.us"
         port: 80
-        path: requestPath
+        path: path
         method: "GET"
       }
+
+    buildIndexReqOpts: (ids, req)->
+      @srIds = ids
+      whereClause = "$where="
+      # Loop through and append to the $where clause
+      ids.forEach (srId) ->
+        whereClause += "unique_key=%27#{srId}%27%20OR%20"
+      # Remove the last %20OR%20
+      lastOr = whereClause.slice(0, -8)
+      path = "#{@basePath}?#{lastOr}"
+      @_reqOpts(path)

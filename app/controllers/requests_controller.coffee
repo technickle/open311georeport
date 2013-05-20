@@ -3,11 +3,14 @@ module.exports = (app) ->
     # GET /requests.[format]?
     @getServiceRequests = (req, res) ->
       socrata = new app.Socrata(res, req)
-      requestOptions = socrata.buildIndexReqOpts(req)
-      socrata.respondWith(requestOptions)
+      sri     = req.query.service_request_id
+      ids     = if sri then sri.split(",") else []
+      options = socrata.buildRequestOpts(ids)
+      socrata.respondWith(options)
 
     # GET /requests/[id].[format]
     @show = (req, res) ->
       socrata = new app.Socrata(res, req)
-      requestOptions = socrata.buildShowReqOpts(req)
-      socrata.respondWith(requestOptions)
+      ids     = [req.params.uid]
+      options = socrata.buildRequestOpts(ids)
+      socrata.respondWith(options)
