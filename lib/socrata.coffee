@@ -1,6 +1,5 @@
 _ = require("underscore")
 moment = require("moment")
-jsonsp = require("jsonsp")
 module.exports = (app) ->
   class app.ResponseParser
     constructor: (attributes)->
@@ -8,6 +7,7 @@ module.exports = (app) ->
       @streamingParser()
 
     streamingParser: ->
+      jsonsp = require("jsonsp")
       @parser  = new jsonsp.Parser (obj)=>
         # FIXME: Rather than emitting the objects progressively this callback buffers the chunks into a single response. There could be a few reasons for this. Most likely cause is the parser regards the response as a single object. The fact that the request objects are wrapped in an array at the root supports that notion.
         @emitJSON(obj)
@@ -34,7 +34,7 @@ module.exports = (app) ->
       format  = @req.params.format
       out     = @res
 
-      # Streaming disabled because Socrata response is not streamable, i.e. it's an array at the root.
+      # Streaming disabled because Socrata response is not streamable, i.e. it's an array at the root. To enable, make sure to add jsonsp into the package.json.
       streaming = false
 
       request = http.request(requestOptions, (response) ->
