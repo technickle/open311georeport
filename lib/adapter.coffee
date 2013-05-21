@@ -1,19 +1,3 @@
-# module.exports = (app) ->
-#   # Your code
-#
-#
-# Or if you want this to be a class
-#
-# module.exports = (app) ->
-#   class app.MyCustomClass
-#
-#     constructor: (args) ->
-#       # Your code
-#
-# Usage: new app.MyCustomClass(args)
-
-
-
 module.exports = (app) ->
   class app.Adapter
     constructor: (responseBody)->
@@ -23,18 +7,17 @@ module.exports = (app) ->
       #   400 invalid request
       #   404 resource doesn't exist
 
-    respond: (res, format, out)->
-      converted_response = @convertToOpen311 @response
-      app.helpers.output converted_response, "service_requests", out, format
+    # Outputs the response in appropriate format
+    # @returns null
+    respond: (response, format, out)->
+      app.helpers.output response, "service_requests", out, format
+      null
 
     # Transform Socrata data into Open311 data
-    #
-    # socrata - Array
-    #
-    # Returns array
-    convertToOpen311: (socrata) ->
+    # @returns array
+    convertToOpen311: ->
       results = []
-      socrata.forEach (obj) ->
+      @response.forEach (obj) ->
         address = undefined
         switch obj.address_type
           when "ADDRESS"

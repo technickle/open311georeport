@@ -18,8 +18,9 @@ module.exports = (app) ->
         response.on "data", (chunk) ->
           responseBody += chunk
         response.on "end", ->
-          adapter = new app.Adapter(responseBody)
-          adapter.respond(response, format, out)
+          adapter   = new app.Adapter(responseBody)
+          resp      = adapter.convertToOpen311()
+          adapter.respond(resp, format, out)
       )
       request.end()
 
