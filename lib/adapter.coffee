@@ -2,13 +2,7 @@ module.exports = (app) ->
   class app.Adapter
     constructor: (responseBody)->
       @response = JSON.parse(responseBody)
-
-    # Outputs the response in appropriate format
-    # @returns null
-    respond: (response, format, out)->
-      app.helpers.output response, "service_requests", out, format
-      null
-
+      
     # Transform Socrata data into Open311 data
     # @returns array
     convertToOpen311: ->
