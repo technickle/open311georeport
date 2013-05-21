@@ -72,22 +72,24 @@ module.exports = (app) ->
                         when "service_code", "status"
                           "#{key} IS #{value}"
                         when "start_date", "end_date"
-                          start_date = opts['start_date']
-                          end_date   = opts['end_date']
-                          if !end_date
-                            end_date   = moment(start_date)
-                              .add("days", 90)
-                              .format("YYYY-MM-DDT00:00:00")+"Z"
-                          else if !start_date
-                            start_date = moment(end_date)
-                              .subtract("days", 90)
-                              .format("YYYY-MM-DDT00:00:00")+"Z"
-                          else
-                            # TODO: make sure the dates are 90 days apart from each other
-                          "created_date >= '#{start_date}' AND created_date <= '#{end_date}'"
+                          @_parseDates(key, value)
       sql_opts  = _.uniq(sql_opts)
       joined_opts   = sql_opts.join(" AND ")
 
+    _parseDates: (key, value)->
+      start_date = opts['start_date']
+      end_date   = opts['end_date']
+      if !end_date
+        end_date   = moment(start_date)
+          .add("days", 90)
+          .format("YYYY-MM-DDT00:00:00")+"Z"
+      else if !start_date
+        start_date = moment(end_date)
+          .subtract("days", 90)
+          .format("YYYY-MM-DDT00:00:00")+"Z"
+      else
+        # TODO: make sure the dates are 90 days apart from each other
+      "created_date >= '#{start_date}' AND created_date <= '#{end_date}'"
 
     _request: (path)->
       {
