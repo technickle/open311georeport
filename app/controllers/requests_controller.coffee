@@ -11,7 +11,7 @@ module.exports = (app) ->
       socrata.callWith(options)
 
     # GET /requests/[id].[format]
-    @show = (req, res) ->
+    @getServiceRequest = (req, res) ->
       socrata = new app.Socrata(res, req)
       ids     = [req.params.uid]
       options = socrata.buildRequest(ids)
