@@ -10,7 +10,11 @@ yaml = require('js-yaml')
 require("#{__dirname}/../config/boot")(app)
 
 configureSwagger = (env)->
-  descriptor = require("#{__dirname}/../api/#{env}.yml")
+  basePath = if env is "production"
+                'http://open311.herokuapp.com'
+              else
+                'http://localhost:3000'
+  descriptor = {apiVersion: '1.0', basePath: basePath}
   resources = [{
       api: require("#{__dirname}/../api/requests.yml")
       controller: app.RequestsController
@@ -37,7 +41,7 @@ app.configure ->
   app.use require('connect-assets')(src: "#{__dirname}/assets")
   app.use app.router
   configureSwagger(app.currentEnv)
-  
+
 
 app.configure 'development', ->
   app.use express.errorHandler()
