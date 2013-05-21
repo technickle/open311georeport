@@ -1,8 +1,13 @@
 module.exports = (app) ->
   class app.Adapter
     constructor: (responseBody)->
-      @response = JSON.parse(responseBody)
-      
+      try
+        @response = JSON.parse(responseBody)
+      catch e
+        @response = responseBody
+
+
+
     # Transform Socrata data into Open311 data
     # @returns array
     convertToOpen311: ->

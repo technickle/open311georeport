@@ -77,16 +77,16 @@ module.exports = (app) ->
 
     _parseOpts: (opts)->
       return "" unless opts
-      sql_opts  =  _.map opts, (value, key)->
+      sql_opts  =  _.map opts, (value, key)=>
                       switch key
                         when "service_code", "status"
                           "#{key} IS #{value}"
                         when "start_date", "end_date"
-                          @_parseDates(key, value)
+                          @_parseDates(key, value, opts)
       sql_opts  = _.uniq(sql_opts)
       joined_opts   = sql_opts.join(" AND ")
 
-    _parseDates: (key, value)->
+    _parseDates: (key, value, opts)->
       start_date = opts['start_date']
       end_date   = opts['end_date']
       if !end_date
