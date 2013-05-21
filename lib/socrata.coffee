@@ -25,7 +25,7 @@ module.exports = (app) ->
         response.on "end", ->
           switch response.statusCode
             when 400
-              console.log responseBody
+              app.helpers.output(responseBody, "error", out, format)
             else
               adapter   = new app.Adapter(responseBody)
               resp      = adapter.convertToOpen311()

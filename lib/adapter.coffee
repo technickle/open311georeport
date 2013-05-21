@@ -2,7 +2,7 @@ module.exports = (app) ->
   class app.Adapter
     constructor: (responseBody)->
       @response = JSON.parse(responseBody)
-      
+
     # Outputs the response in appropriate format
     # @returns null
     respond: (response, format, out)->
