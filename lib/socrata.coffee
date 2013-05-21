@@ -8,8 +8,6 @@ module.exports = (app) ->
       @basePath = "/resource/erm2-nwe9.json"
 
     fetchData: (requestOptions)->
-      # TODO: evaluate the other parameters and check for validity
-      # TODO: construct SODA query
       http    = require 'http'
       format  = @req.params.format
       out     = @res
