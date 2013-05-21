@@ -24,7 +24,7 @@ module.exports = (app) ->
       request.end()
 
     callWith: (requestOptions)->
-      if @_noIdsGiven()
+      if @_noIdsGiven
         # Return early
         @res.send 404
         return
@@ -33,7 +33,8 @@ module.exports = (app) ->
         @fetchData requestOptions
 
     buildRequest: (ids=[], opts={})->
-      @srIds = ids
+      @_noIdsGiven      = ids.length is 0
+
       single_quoted_ids = _.map ids, (id)-> "'#{id}'"
       unique_keyed_ids  = _.map single_quoted_ids, (id)->"unique_key=#{id}"
       joined_keys       = unique_keyed_ids.join(' OR ')
@@ -58,10 +59,6 @@ module.exports = (app) ->
                         "#{key} = #{value}"
       joined_opts   = sql_opts.join(" AND ")
       " AND " + joined_opts
-
-
-
-    _noIdsGiven: -> @srIds.length is 0
 
     _request: (path)->
       {
