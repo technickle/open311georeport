@@ -17,6 +17,7 @@
     , "moment": "*"
     , "jquery": "*"
     , "jsonsp": "*"
+    , "optimist": "*"
   }
   , "devDependencies": {
       "vows": "0.5.x"

@@ -8,21 +8,17 @@ module.exports = (app) ->
       @streamingParser()
 
     streamingParser: ->
-      @parser  = new jsonsp.Parser()
-      @parser.on 'object', (obj)=>
-        # FIXME: For whatever reason, the object is fired only once, simultaneously as the entire page is loaded. So rather than emitting the objects progressively this callback buffers the chunks into a single response. There could be a few reasons for this. First one I can think of is the parser regards the response as a single object. The fact that the resulting objects are wrapped in an array at the root would support that notion.
-        console.log obj
+      @parser  = new jsonsp.Parser (obj)=>
+        # FIXME: Rather than emitting the objects progressively this callback buffers the chunks into a single response. There could be a few reasons for this. Most likely cause is the parser regards the response as a single object. The fact that the request objects are wrapped in an array at the root supports that notion.
         @emitJSON(obj)
       @out.type("application/json")
 
     parse: (chunk) ->
-      console.log "chunk"
       @parser.parse(chunk.toString('utf8'))
 
     emitJSON: (obj)->
       adapter   = new app.Adapter(obj)
       resp      = adapter.convertToOpen311()
-      # console.log resp
       @out.send resp
       # app.helpers.output resp, "service_requests", @out, @format
 
@@ -38,6 +34,7 @@ module.exports = (app) ->
       format  = @req.params.format
       out     = @res
 
+      # Streaming disabled because Socrata response is not streamable, i.e. it's an array at the root.
       streaming = false
 
       request = http.request(requestOptions, (response) ->
