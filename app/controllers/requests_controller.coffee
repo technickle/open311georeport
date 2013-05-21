@@ -1,3 +1,4 @@
+_ = require("underscore")
 module.exports = (app) ->
   class app.RequestsController
     # GET /requests.[format]?
@@ -5,7 +6,8 @@ module.exports = (app) ->
       socrata = new app.Socrata(res, req)
       sri     = req.query.service_request_id
       ids     = if sri then sri.split(",") else []
-      options = socrata.buildRequest(ids)
+      opt     = _.omit req.query, "service_request_id"
+      options = socrata.buildRequest(ids, opt)
       socrata.callWith(options)
 
     # GET /requests/[id].[format]

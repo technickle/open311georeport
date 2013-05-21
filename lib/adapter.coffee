@@ -12,21 +12,20 @@
 #
 # Usage: new app.MyCustomClass(args)
 
-#http response errors:
-#  403 missing API key
-#   400 invalid request
-#   404 resource doesn't exist
 
 
 module.exports = (app) ->
   class app.Adapter
     constructor: (responseBody)->
-      socrata = JSON.parse(responseBody)
-      # console.log(socrata)
-      @response = @convertToOpen311(socrata)
+      @response = JSON.parse(responseBody)
+      # TODO: handle HTTP response errors
+      #   403 missing API key
+      #   400 invalid request
+      #   404 resource doesn't exist
 
-    respond: (res, req)->
-      app.helpers.output @response, "service_requests", res, req.params.format
+    respond: (res, format, out)->
+      converted_response = @convertToOpen311 @response
+      app.helpers.output converted_response, "service_requests", out, format
 
     # Transform Socrata data into Open311 data
     #
