@@ -1,5 +1,5 @@
 _ = require("underscore")
-$ = require("jquery")
+moment = require("moment")
 module.exports = (app) ->
   class app.Socrata
     constructor: (res, req)->
@@ -10,10 +10,15 @@ module.exports = (app) ->
     fetchData: (requestOptions)->
       # TODO: evaluate the other parameters and check for validity
       # TODO: construct SODA query
-      http = require 'http'
+      http    = require 'http'
       format  = @req.params.format
       out     = @res
       request = http.request(requestOptions, (response) ->
+        # TODO: handle HTTP response errors
+        #   403 missing API key
+        #   400 invalid request
+        #   404 resource doesn't exist
+
         responseBody = ""
         response.on "data", (chunk) ->
           responseBody += chunk
@@ -44,7 +49,6 @@ module.exports = (app) ->
       params            = joined_keys #+ parsed_opts
       encoded_params    = encodeURI(params)
       query             = "$where=" + encoded_params
-      console.log query
       path              = "#{@basePath}?#{query}"
       @_request(path)
 
@@ -52,12 +56,26 @@ module.exports = (app) ->
 
     _parseOpts: (opts)->
       return "" unless opts
-      sql_opts =  _.map opts, (value, key)->
-                    switch key
-                      when "service_code", "status"
-                        "#{key} IS #{value}"
-                      when "start_date", "end_date"
-                        "#{key} = #{value}"
+      sql_opts  =  _.map opts, (value, key)->
+                      switch key
+                        when "service_code", "status"
+                          "#{key} IS #{value}"
+                        when "start_date", "end_date"
+                          start_date = opts['start_date']
+                          end_date   = opts['end_date']
+                          if !end_date
+                            end_date   = moment(start_date)
+                              .add("days", 90)
+                              .format("YYYY-MM-DDT00:00:00")+"Z"
+                          else if !start_date
+                            start_date = moment(end_date)
+                              .subtract("days", 90)
+                              .format("YYYY-MM-DDT00:00:00")+"Z"
+                          else
+                            # TODO: make sure the dates are 90 days apart from each other
+                          "created_date BETWEEN #{start_date} AND #{end_date}"
+      sql_opts  = _.uniq(sql_opts)
+
       joined_opts   = sql_opts.join(" AND ")
       " AND " + joined_opts
 
