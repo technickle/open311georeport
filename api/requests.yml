@@ -13,7 +13,7 @@ apis:
           -
             paramType: "query"
             name: "service_request_id"
-            required: true
+            required: false
             dataType: "string"
             description: "The unique ID of the service request created."
             allowMultiple: true

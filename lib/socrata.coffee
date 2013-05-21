@@ -23,14 +23,18 @@ module.exports = (app) ->
         response.on "data", (chunk) ->
           responseBody += chunk
         response.on "end", ->
-          adapter   = new app.Adapter(responseBody)
-          resp      = adapter.convertToOpen311()
-          adapter.respond(resp, format, out)
+          switch response.statusCode
+            when 400
+              console.log responseBody
+            else
+              adapter   = new app.Adapter(responseBody)
+              resp      = adapter.convertToOpen311()
+              adapter.respond(resp, format, out)
       )
       request.end()
 
     callWith: (requestOptions)->
-      if @_noIdsGiven
+      if @_noIdsGiven and requestOptions is null
         # Return early
         @res.send 404
         return
@@ -44,13 +48,20 @@ module.exports = (app) ->
       single_quoted_ids = _.map ids, (id)-> "'#{id}'"
       unique_keyed_ids  = _.map single_quoted_ids, (id)->"unique_key=#{id}"
       joined_keys       = unique_keyed_ids.join(' OR ')
-      parsed_opts       = @_parseOpts(opts)
-      console.log parsed_opts
-      params            = joined_keys #+ parsed_opts
+
+      params            = if @_noIdsGiven
+                            @_parseOpts(opts)
+                          else joined_keys
+
       encoded_params    = encodeURI(params)
-      query             = "$where=" + encoded_params
-      path              = "#{@basePath}?#{query}"
-      @_request(path)
+
+      if params
+        query           = "$where=" + encoded_params
+        path            = "#{@basePath}?#{query}"
+        @_request(path)
+      else
+        null
+
 
     #### Private #####
 
@@ -75,9 +86,8 @@ module.exports = (app) ->
                             # TODO: make sure the dates are 90 days apart from each other
                           "created_date BETWEEN #{start_date} AND #{end_date}"
       sql_opts  = _.uniq(sql_opts)
-
       joined_opts   = sql_opts.join(" AND ")
-      " AND " + joined_opts
+
 
     _request: (path)->
       {
