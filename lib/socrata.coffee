@@ -2,6 +2,31 @@ _ = require("underscore")
 moment = require("moment")
 jsonsp = require("jsonsp")
 module.exports = (app) ->
+  class app.ResponseParser
+    constructor: (attributes)->
+      [@out, @format] = [attributes["out"], attributes["format"]]
+      @streamingParser()
+
+    streamingParser: ->
+      @parser  = new jsonsp.Parser()
+      @parser.on 'object', (obj)=>
+        # FIXME: For whatever reason, the object is fired only once, simultaneously as the entire page is loaded. So rather than emitting the objects progressively this callback buffers the chunks into a single response. There could be a few reasons for this. First one I can think of is the parser regards the response as a single object. The fact that the resulting objects are wrapped in an array at the root would support that notion.
+        console.log obj
+        @emitJSON(obj)
+      @out.type("application/json")
+
+    parse: (chunk) ->
+      console.log "chunk"
+      @parser.parse(chunk.toString('utf8'))
+
+    emitJSON: (obj)->
+      adapter   = new app.Adapter(obj)
+      resp      = adapter.convertToOpen311()
+      # console.log resp
+      @out.send resp
+      # app.helpers.output resp, "service_requests", @out, @format
+
+
   class app.Socrata
     constructor: (res, req)->
       @res = res
@@ -12,26 +37,23 @@ module.exports = (app) ->
       http    = require 'http'
       format  = @req.params.format
       out     = @res
-      parser  = new jsonsp.Parser()
+
       streaming = false
+
       request = http.request(requestOptions, (response) ->
         # TODO: handle HTTP response errors
         #   403 missing API key
         #   400 invalid request
         #   404 resource doesn't exist
-
         switch response.statusCode
           when 400
             app.helpers.output(responseBody, "error", out, format)
           else
             if streaming
               # feed each chunk of data incrementally to the JSON stream parser
+              parser  = new app.ResponseParser(out: out, format: format)
               response.on "data", (chunk) ->
                 parser.parse(chunk.toString('utf8'))
-                parser.on 'object', (obj)->
-                  adapter   = new app.Adapter(obj)
-                  resp = adapter.convertToOpen311()
-                  app.helpers.output resp, "service_requests", out, format
             else
               responseBody = ""
               response.on "data", (chunk) ->
