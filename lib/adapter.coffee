@@ -2,11 +2,7 @@ module.exports = (app) ->
   class app.Adapter
     constructor: (responseBody)->
       @response = JSON.parse(responseBody)
-      # TODO: handle HTTP response errors
-      #   403 missing API key
-      #   400 invalid request
-      #   404 resource doesn't exist
-
+      
     # Outputs the response in appropriate format
     # @returns null
     respond: (response, format, out)->
