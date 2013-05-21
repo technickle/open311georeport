@@ -1,5 +1,6 @@
 _ = require("underscore")
 moment = require("moment")
+jsonsp = require("jsonsp")
 module.exports = (app) ->
   class app.Socrata
     constructor: (res, req)->
@@ -11,23 +12,34 @@ module.exports = (app) ->
       http    = require 'http'
       format  = @req.params.format
       out     = @res
+      parser  = new jsonsp.Parser()
+      streaming = false
       request = http.request(requestOptions, (response) ->
         # TODO: handle HTTP response errors
         #   403 missing API key
         #   400 invalid request
         #   404 resource doesn't exist
 
-        responseBody = ""
-        response.on "data", (chunk) ->
-          responseBody += chunk
-        response.on "end", ->
-          switch response.statusCode
-            when 400
-              app.helpers.output(responseBody, "error", out, format)
+        switch response.statusCode
+          when 400
+            app.helpers.output(responseBody, "error", out, format)
+          else
+            if streaming
+              # feed each chunk of data incrementally to the JSON stream parser
+              response.on "data", (chunk) ->
+                parser.parse(chunk.toString('utf8'))
+                parser.on 'object', (obj)->
+                  adapter   = new app.Adapter(obj)
+                  resp = adapter.convertToOpen311()
+                  app.helpers.output resp, "service_requests", out, format
             else
-              adapter   = new app.Adapter(responseBody)
-              resp      = adapter.convertToOpen311()
-              adapter.respond(resp, format, out)
+              responseBody = ""
+              response.on "data", (chunk) ->
+                responseBody += chunk
+              response.on "end", ->
+                adapter   = new app.Adapter(responseBody)
+                resp      = adapter.convertToOpen311()
+                app.helpers.output resp, "service_requests", out, format
       )
       request.end()
 

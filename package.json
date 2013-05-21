@@ -16,6 +16,7 @@
     , "js-yaml": "*"
     , "moment": "*"
     , "jquery": "*"
+    , "jsonsp": "*"
   }
   , "devDependencies": {
       "vows": "0.5.x"
