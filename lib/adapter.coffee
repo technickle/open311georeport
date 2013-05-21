@@ -14,10 +14,10 @@ module.exports = (app) ->
     convertToOpen311: ->
       results = []
       if _.isArray @response
-        @response.forEach (obj) ->
+        @response.forEach (obj) =>
           results.push @_buildObj(obj)
         results
-        
+
     _formatAddress: (obj)->
       address = undefined
       switch obj.address_type
@@ -32,7 +32,7 @@ module.exports = (app) ->
       address
 
     _buildObj: (obj)->
-      address = @_formatAddress(address)
+      address = @_formatAddress(obj)
       {
         service_request_id: obj.unique_key
         status: obj.status.toLowerCase()
