@@ -84,7 +84,7 @@ module.exports = (app) ->
                               .format("YYYY-MM-DDT00:00:00")+"Z"
                           else
                             # TODO: make sure the dates are 90 days apart from each other
-                          "created_date BETWEEN #{start_date} AND #{end_date}"
+                          "created_date >= '#{start_date}' AND created_date <= '#{end_date}'"
       sql_opts  = _.uniq(sql_opts)
       joined_opts   = sql_opts.join(" AND ")
 
