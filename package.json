@@ -18,6 +18,8 @@
     , "request": "*"
     , "event-stream": "*"
     , "JSONStream": "*"
+    , "bootstrap-stylus": "*"
+    , "nib": "*"
   }
   , "devDependencies": {
       "vows": "0.5.x"
