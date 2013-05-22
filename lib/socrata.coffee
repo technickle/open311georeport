@@ -33,16 +33,12 @@ module.exports = (app) ->
       format  = @req.params.format
       out     = @res
 
-      # @_viaLegacyRequest(requestOptions)
       request = require("request")
       request(requestOptions, (error, response, body)=>
           adapter   = new app.Adapter(body)
           resp      = adapter.convertToOpen311()
           app.helpers.output resp, "service_requests", out, format
         )
-
-
-
 
     callWith: (requestOptions)->
       if @_noIdsGiven and requestOptions is null
@@ -76,38 +72,6 @@ module.exports = (app) ->
 
     #### Private #####
 
-    _viaLegacyRequest: (requestOptions)->
-      http    = require 'http'
-      format  = @req.params.format
-      out     = @res
-      # Streaming disabled because Socrata response is not streamable, i.e. it's an array at the root. To enable, make sure to add jsonsp into the package.json.
-      streaming = false
-
-      request = http.request(requestOptions, (response) ->
-        # TODO: handle HTTP response errors
-        #   403 missing API key
-        #   400 invalid request
-        #   404 resource doesn't exist
-        switch response.statusCode
-          when 400
-            app.helpers.output(responseBody, "error", out, format)
-          else
-            if streaming
-              # feed each chunk of data incrementally to the JSON stream parser
-              parser  = new app.ResponseParser(out: out, format: format)
-              response.on "data", (chunk) ->
-                parser.parse(chunk.toString('utf8'))
-            else
-              responseBody = ""
-              response.on "data", (chunk) ->
-                responseBody += chunk
-              response.on "end", ->
-                adapter   = new app.Adapter(responseBody)
-                resp      = adapter.convertToOpen311()
-                app.helpers.output resp, "service_requests", out, format
-      )
-      request.end()
-
     _parseOpts: (opts)->
       return "" unless opts
       sql_opts  =  _.map opts, (value, key)=>
@@ -137,9 +101,7 @@ module.exports = (app) ->
     _request: (path)->
       hostname = "data.cityofnewyork.us"
       {
-        hostname: hostname
         port: 80
-        path: path
         uri: "http://#{hostname}#{path}"
         method: "GET"
       }
