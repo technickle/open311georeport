@@ -1,21 +1,6 @@
 _ = require("underscore")
 moment = require("moment")
 module.exports = (app) ->
-  class app.ResponseParser
-    constructor: (attributes)->
-      [@out, @format] = [attributes["out"], attributes["format"]]
-      @streamingParser()
-
-    streamingParser: ->
-      # TODO:
-
-    emitJSON: (obj)->
-      adapter   = new app.Adapter(obj)
-      resp      = adapter.convertToOpen311()
-      @out.send resp
-      # app.helpers.output resp, "service_requests", @out, @format
-
-
   class app.Socrata
     constructor: (res, req)->
       @res = res
@@ -27,15 +12,20 @@ module.exports = (app) ->
       out     = @res
 
       request = require("request")
+      JSONStream = require("JSONStream")
+      es = require("event-stream")
+      stream = JSONStream.parse("*")
+      stream.on "root", (root, count)->
+        # console.log root, count
       request(requestOptions, (error, response, body)=>
           if error
             app.helpers.output(body, "error", out, format)
             return
-
           adapter   = new app.Adapter(body)
           resp      = adapter.convertToOpen311()
-          app.helpers.output resp, "service_requests", out, format
+          app.helpers.output(resp, "service_requests", out, format)
         )
+
 
     callWith: (requestOptions)->
       if @_noIdsGiven and requestOptions is null
