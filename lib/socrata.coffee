@@ -7,14 +7,7 @@ module.exports = (app) ->
       @streamingParser()
 
     streamingParser: ->
-      jsonsp = require("jsonsp")
-      @parser  = new jsonsp.Parser (obj)=>
-        # FIXME: Rather than emitting the objects progressively this callback buffers the chunks into a single response. There could be a few reasons for this. Most likely cause is the parser regards the response as a single object. The fact that the request objects are wrapped in an array at the root supports that notion.
-        @emitJSON(obj)
-      @out.type("application/json")
-
-    parse: (chunk) ->
-      @parser.parse(chunk.toString('utf8'))
+      # TODO:
 
     emitJSON: (obj)->
       adapter   = new app.Adapter(obj)
