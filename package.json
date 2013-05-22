@@ -12,7 +12,7 @@
     , "coffee-script": "*"
     , "easyxml": "https://github.com/tenaciousflea/node-easyxml/tarball/master"
     , "express": "~3.2.3"
-    , "swagger-jack": "*"
+    , "swagger-jack": "1.6.0"
     , "js-yaml": "*"
     , "moment": "*"
     , "request": "*"
