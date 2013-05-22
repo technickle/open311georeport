@@ -30,7 +30,19 @@ module.exports = (app) ->
       @basePath = "/resource/erm2-nwe9.json"
 
     fetchData: (requestOptions)->
-      @_viaLegacyRequest(requestOptions)
+      format  = @req.params.format
+      out     = @res
+
+      # @_viaLegacyRequest(requestOptions)
+      request = require("request")
+      request(requestOptions, (error, response, body)=>
+          adapter   = new app.Adapter(body)
+          resp      = adapter.convertToOpen311()
+          app.helpers.output resp, "service_requests", out, format
+        )
+
+
+
 
     callWith: (requestOptions)->
       if @_noIdsGiven and requestOptions is null
@@ -123,10 +135,12 @@ module.exports = (app) ->
       "created_date >= '#{start_date}' AND created_date <= '#{end_date}'"
 
     _request: (path)->
+      hostname = "data.cityofnewyork.us"
       {
-        hostname: "data.cityofnewyork.us"
+        hostname: hostname
         port: 80
         path: path
+        uri: "http://#{hostname}#{path}"
         method: "GET"
       }
 
