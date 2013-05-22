@@ -28,6 +28,10 @@ module.exports = (app) ->
 
       request = require("request")
       request(requestOptions, (error, response, body)=>
+          if error
+            app.helpers.output(body, "error", out, format)
+            return
+
           adapter   = new app.Adapter(body)
           resp      = adapter.convertToOpen311()
           app.helpers.output resp, "service_requests", out, format
