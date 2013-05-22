@@ -10,7 +10,7 @@
     , "underscore": "*"
     , "stylus": "*"
     , "coffee-script": "*"
-    , "easyxml": "~0.0.4"
+    , "easyxml": "https://github.com/tenaciousflea/node-easyxml/tarball/master"
     , "express": "~3.2.3"
     , "swagger-jack": "*"
     , "js-yaml": "*"

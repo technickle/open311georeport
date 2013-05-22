@@ -43,10 +43,12 @@ exports.output = (obj, rootElement, res, format)->
         res.type("application/json")
         res.send obj
       when "xml"
-        xmlout = require("easyxml")
-        xmlout.config.manifest = true
-        # TODO: fix XML output in SR array <0>,<1> etc*********
+        xmlout        = require("easyxml")
+        xmlout.configure
+          manifest: true
+          rootElement: rootElement
+          objectRoot: "request"
         res.setHeader "Content-Type", "text/xml; charset=utf-8"
-        res.send xmlout.render(obj, rootElement)
+        res.send xmlout.render(obj)
       else
         res.send 404, ".xml or .json expected"
