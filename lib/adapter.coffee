@@ -10,13 +10,14 @@ module.exports = (app) ->
 
     # Transform Socrata data into Open311 data
     # @params {Array} response
-    # @returns {Array}
+    # @returns {Array, Object}
     convertToOpen311: ->
       results = []
       if _.isArray @response
         @response.forEach (obj) =>
           results.push @_buildObj(obj)
-
+      else
+        results = @_buildObj(@response)
       results
 
 
