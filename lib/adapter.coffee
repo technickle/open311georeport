@@ -2,13 +2,13 @@ _   = require("underscore")
 _s  = require('underscore.string')
 
 module.exports = (app) ->
-  class app.Adapter
+  class app.Open311Adapter
     constructor: (responseBody)->
       @response = _s.trim responseBody
 
     # Transform Socrata data into Open311 data
     # @returns {String}
-    convertToOpen311: ->
+    toJSON: ->
       head = (/^\[/).test(@response)
       middle = (/^,/).test(@response)
       if head
@@ -17,8 +17,11 @@ module.exports = (app) ->
       else if middle
         obj = JSON.parse(@response.slice(1))
         @response = "," + JSON.stringify(@_buildObj(obj))
-        
       @response
+
+    toXML: ->
+      # TODO: handle the XML format differently
+      
 
     _buildObj: (obj)->
       address = @_formatAddress(obj)

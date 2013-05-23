@@ -22,11 +22,9 @@ module.exports = (app) ->
           counter++
           if counter is 1
             out.type("application/json")
-          adapter   = new app.Adapter(data)
-          newData = adapter.convertToOpen311()
-          newData
+          adapter   = new app.Open311Adapter(data)
+          adapter.toJSON()
         )).pipe(out)
-      # TODO: handle the XML format differently
       # TODO: handle single object responses, as opposed to array responses
 
     callWith: (requestOptions)->
