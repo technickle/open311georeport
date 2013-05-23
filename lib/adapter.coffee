@@ -6,7 +6,7 @@ module.exports = (app) ->
     constructor: (responseBody)->
       @response = _s.trim responseBody
 
-    # Transform Socrata data into Open311 data
+    # Transform Socrata data into Open311 JSON
     # @returns {String}
     toJSON: ->
       head = (/^\[/).test(@response)
@@ -19,9 +19,26 @@ module.exports = (app) ->
         @response = "," + JSON.stringify(@_buildObj(obj))
       @response
 
-    toXML: ->
-      # TODO: handle the XML format differently
-      
+    # Transform Socrata data into Open311 XML
+    # @returns {String}
+    toXML: (rootElement="service_requests")->
+      xmlout = require("easyxml")
+      xmlout.configure
+        manifest: false
+        rootElement: "request"
+
+      head = (/^\[/).test(@response)
+      middle = (/^,/).test(@response)
+      if head
+        obj = JSON.parse(@response.slice(1))
+        manifest  = "<?xml version='1.0' encoding='utf-8'?>"
+        @response = "#{manifest}\n<#{rootElement}>\n" + xmlout.render(@_buildObj(obj))
+      else if middle
+        obj = JSON.parse(@response.slice(1))
+        @response = xmlout.render(@_buildObj(obj))
+      else
+        @response = "</#{rootElement}>"
+      @response
 
     _buildObj: (obj)->
       address = @_formatAddress(obj)
