@@ -14,10 +14,15 @@ module.exports = (app) ->
       format  = @req.params.format
       out     = @res
       # Streams data as it arrives. Fast.
-      @_async(requestOptions, out, format)
-      # Buffers before transmitting data. Slower than the async.
-      # @_sync(requestOptions, out, format)
-
+      request(requestOptions)
+        .pipe(JSONStream.parse("*"))
+        .pipe(JSONStream.stringify())
+        .pipe(es.mapSync((data)->
+          adapter   = new app.Adapter(data)
+          adapter.convertToOpen311()
+        )).pipe(out)
+      # TODO: set the type header to application/json
+      # TODO: handle the XML format differently
 
     callWith: (requestOptions)->
       if @_noIdsGiven and requestOptions is null
@@ -50,41 +55,6 @@ module.exports = (app) ->
 
 
     #### Private #####
-
-    _async: (requestOptions, out, format)->
-      stream = JSONStream.parse("*")
-      counter = 0
-      request(requestOptions)
-        .pipe(stream)
-        .pipe(es.mapSync((data)->
-          adapter   = new app.Adapter(data)
-          newData   = adapter.convertToOpen311()
-          newData   = JSON.stringify newData
-
-          counter++
-          if counter is 1
-            newData = "[#{newData},"
-          else
-            newData = "#{newData},"
-          newData
-        )).pipe(out)
-
-      # TODO: set the type header to application/json
-      # TODO: add closing bracket to the data before the stream is closed
-      # TODO: Do not add brackets around data if there is only one piece of data
-
-      
-
-    _sync: (requestOptions, out, format)->
-      request(requestOptions, (error, response, body)=>
-          if error
-            app.helpers.output(body, "error", out, format)
-            return
-          adapter   = new app.Adapter(body)
-          resp      = adapter.convertToOpen311()
-          app.helpers.output(resp, "service_requests", out, format)
-        )
-
     _parseOpts: (opts)->
       return "" unless opts
       sql_opts  =  _.map opts, (value, key)=>
