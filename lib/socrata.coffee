@@ -19,11 +19,19 @@ module.exports = (app) ->
         .pipe(JSONStream.parse("*"))
         .pipe(JSONStream.stringify())
         .pipe(es.mapSync((data)->
+          adapter   = new app.Open311Adapter(data)
+          ret       = ""
           counter++
           if counter is 1
-            out.type("application/json")
-          adapter   = new app.Open311Adapter(data)
-          adapter.toJSON()
+            # Set the response type as first order of business.
+            switch format
+              when "json"
+                out.type("application/json")
+                ret = adapter.toJSON()
+              when "xml"
+                out.type("text/xml; charset=utf-8")
+                ret = adapter.toXML()
+          ret
         )).pipe(out)
       # TODO: handle single object responses, as opposed to array responses
 
