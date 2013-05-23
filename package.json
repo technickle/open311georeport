@@ -8,6 +8,7 @@
     , "express-partials": ">= 0.0.5"
     , "ejs": "*"
     , "underscore": "*"
+    , "underscore.string": "*"
     , "stylus": "*"
     , "coffee-script": "*"
     , "easyxml": "https://github.com/tenaciousflea/node-easyxml/tarball/master"

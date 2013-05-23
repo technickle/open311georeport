@@ -1,21 +1,26 @@
-_ = require("underscore")
+_   = require("underscore")
+_s  = require('underscore.string')
 
 module.exports = (app) ->
   class app.Adapter
     constructor: (responseBody)->
-      @response = responseBody
+      @response = _s.trim responseBody
 
     # Transform Socrata data into Open311 data
     # @returns {String}
     convertToOpen311: ->
       head = (/^\[/).test(@response)
       tail = (/\]$/).test(@response)
+      middle = (/^,/).test(@response)
       if head
         obj = JSON.parse(@response.slice(1))
         @response = "[" + JSON.stringify(@_buildObj(obj))
       else if tail
-        obj = JSON.parse(@response.slice(1))
+        obj = JSON.parse(@response.slice(0, @response.length - 1))
         @response = JSON.stringify(@_buildObj(obj)) + "]"
+      else if middle
+        obj = JSON.parse(@response.slice(1))
+        @response = "," + JSON.stringify(@_buildObj(obj))
       else
         obj = JSON.parse(@response)
         @response = JSON.stringify(@_buildObj(obj))
@@ -44,7 +49,7 @@ module.exports = (app) ->
         long: obj.longitude or null #quoted because long is a JS type
         media_url: null
       }
-      
+
     _formatAddress: (obj)->
       address = undefined
       switch obj.address_type
