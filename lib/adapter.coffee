@@ -3,22 +3,24 @@ _ = require("underscore")
 module.exports = (app) ->
   class app.Adapter
     constructor: (responseBody)->
-      try
-        @response = JSON.parse(responseBody)
-      catch e
-        @response = responseBody
+      @response = responseBody
 
     # Transform Socrata data into Open311 data
-    # @params {Array} response
-    # @returns {Array, Object}
+    # @returns {String}
     convertToOpen311: ->
-      results = []
-      if _.isArray @response
-        @response.forEach (obj) =>
-          results.push @_buildObj(obj)
+      head = (/^\[/).test(@response)
+      tail = (/\]$/).test(@response)
+      if head
+        obj = JSON.parse(@response.slice(1))
+        @response = "[" + JSON.stringify(@_buildObj(obj))
+      else if tail
+        obj = JSON.parse(@response.slice(1))
+        @response = JSON.stringify(@_buildObj(obj)) + "]"
       else
-        results = @_buildObj(@response)
-      results
+        obj = JSON.parse(@response)
+        @response = JSON.stringify(@_buildObj(obj))
+      @response
+
 
 
     _formatAddress: (obj)->
