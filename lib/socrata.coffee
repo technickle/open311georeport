@@ -1,5 +1,8 @@
-_ = require("underscore")
-moment = require("moment")
+_       = require("underscore")
+moment  = require("moment")
+request = require("request")
+JSONStream = require("JSONStream")
+es      = require("event-stream")
 module.exports = (app) ->
   class app.Socrata
     constructor: (res, req)->
@@ -10,21 +13,10 @@ module.exports = (app) ->
     fetchData: (requestOptions)->
       format  = @req.params.format
       out     = @res
-
-      request = require("request")
-      JSONStream = require("JSONStream")
-      es = require("event-stream")
-      stream = JSONStream.parse("*")
-      stream.on "root", (root, count)->
-        # console.log root, count
-      request(requestOptions, (error, response, body)=>
-          if error
-            app.helpers.output(body, "error", out, format)
-            return
-          adapter   = new app.Adapter(body)
-          resp      = adapter.convertToOpen311()
-          app.helpers.output(resp, "service_requests", out, format)
-        )
+      # Streams data as it arrives. Fast.
+      @_async(requestOptions, out, format)
+      # Buffers before transmitting data. Slower than the async.
+      # @_sync(requestOptions, out, format)
 
 
     callWith: (requestOptions)->
@@ -58,6 +50,40 @@ module.exports = (app) ->
 
 
     #### Private #####
+
+    _async: (requestOptions, out, format)->
+      stream = JSONStream.parse("*")
+      counter = 0
+      request(requestOptions)
+        .pipe(stream)
+        .pipe(es.mapSync((data)->
+          adapter   = new app.Adapter(data)
+          newData   = adapter.convertToOpen311()
+          newData   = JSON.stringify newData
+
+          counter++
+          if counter is 1
+            newData = "[#{newData},"
+          else
+            newData = "#{newData},"
+          newData
+        )).pipe(out)
+
+      # TODO: set the type header to application/json
+      # TODO: add closing bracket to the data before the stream is closed
+      # TODO: Do not add brackets around data if there is only one piece of data
+
+      
+
+    _sync: (requestOptions, out, format)->
+      request(requestOptions, (error, response, body)=>
+          if error
+            app.helpers.output(body, "error", out, format)
+            return
+          adapter   = new app.Adapter(body)
+          resp      = adapter.convertToOpen311()
+          app.helpers.output(resp, "service_requests", out, format)
+        )
 
     _parseOpts: (opts)->
       return "" unless opts
