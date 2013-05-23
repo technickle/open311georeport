@@ -26,6 +26,18 @@ module.exports = (app) ->
         @response = JSON.stringify(@_buildObj(obj))
       @response
 
+    # Transform Socrata data into Open311 data
+    # @params {Array} response
+    # @returns {Array, Object}
+    legacyConvertToOpen311: ->
+      results = []
+      @response = JSON.parse(@response)
+      if _.isArray @response
+        @response.forEach (obj) =>
+          results.push @_buildObj(obj)
+      else
+        results = @_buildObj(@response)
+      results
 
 
     _buildObj: (obj)->
