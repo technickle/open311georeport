@@ -16,7 +16,9 @@ module.exports = (app) ->
       if _.isArray @response
         @response.forEach (obj) =>
           results.push @_buildObj(obj)
-        results
+
+      results
+
 
     _formatAddress: (obj)->
       address = undefined
