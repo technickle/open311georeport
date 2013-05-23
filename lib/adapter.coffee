@@ -23,19 +23,6 @@ module.exports = (app) ->
 
 
 
-    _formatAddress: (obj)->
-      address = undefined
-      switch obj.address_type
-        when "ADDRESS"
-          address = obj.incident_address + " " + obj.city + " NY"
-        when "INTERSECTION"
-          address = obj.intersection_street_1 + " @ " + obj.intersection_street_2 + ", " + obj.borough + " NY"
-        when "PLACENAME"
-          address = null #TODO
-        else
-          address = null
-      address
-
     _buildObj: (obj)->
       address = @_formatAddress(obj)
       {
@@ -57,3 +44,16 @@ module.exports = (app) ->
         long: obj.longitude or null #quoted because long is a JS type
         media_url: null
       }
+      
+    _formatAddress: (obj)->
+      address = undefined
+      switch obj.address_type
+        when "ADDRESS"
+          address = obj.incident_address + " " + obj.city + " NY"
+        when "INTERSECTION"
+          address = obj.intersection_street_1 + " @ " + obj.intersection_street_2 + ", " + obj.borough + " NY"
+        when "PLACENAME"
+          address = null #TODO
+        else
+          address = null
+      address
