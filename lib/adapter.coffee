@@ -10,22 +10,16 @@ module.exports = (app) ->
     # @returns {String}
     convertToOpen311: ->
       head = (/^\[/).test(@response)
-      tail = (/\]$/).test(@response)
       middle = (/^,/).test(@response)
       if head
         obj = JSON.parse(@response.slice(1))
         @response = "[" + JSON.stringify(@_buildObj(obj))
-      else if tail
-        obj = JSON.parse(@response.slice(0, @response.length - 1))
-        @response = JSON.stringify(@_buildObj(obj)) + "]"
       else if middle
         obj = JSON.parse(@response.slice(1))
         @response = "," + JSON.stringify(@_buildObj(obj))
-      else
-        obj = JSON.parse(@response)
-        @response = JSON.stringify(@_buildObj(obj))
+        
       @response
-      
+
     _buildObj: (obj)->
       address = @_formatAddress(obj)
       {
