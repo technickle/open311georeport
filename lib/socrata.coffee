@@ -27,13 +27,16 @@ module.exports = (app) ->
             switch format
               when "json"
                 out.type("application/json")
-                ret = adapter.toJSON()
               when "xml"
                 out.type("text/xml; charset=utf-8")
-                ret = adapter.toXML()
-          ret
+
+          switch format
+            when "json"
+              adapter.toJSON()
+            when "xml"
+              adapter.toXML()
+
         )).pipe(out)
-      # TODO: handle single object responses, as opposed to array responses
 
     callWith: (requestOptions)->
       if @_noIdsGiven and requestOptions is null
