@@ -13,16 +13,21 @@ module.exports = (app) ->
     fetchData: (requestOptions)->
       format  = @req.params.format
       out     = @res
+      counter = 0
       # Streams data as it arrives. Fast.
       request(requestOptions)
         .pipe(JSONStream.parse("*"))
         .pipe(JSONStream.stringify())
         .pipe(es.mapSync((data)->
+          counter++
+          if counter is 1
+            out.type("application/json")
           adapter   = new app.Adapter(data)
-          adapter.convertToOpen311()
+          newData = adapter.convertToOpen311()
+          newData
         )).pipe(out)
-      # TODO: set the type header to application/json
       # TODO: handle the XML format differently
+      # TODO: handle single object responses, as opposed to array responses
 
     callWith: (requestOptions)->
       if @_noIdsGiven and requestOptions is null
