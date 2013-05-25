@@ -1,25 +1,18 @@
+_ = require("underscore")
 module.exports = (app) ->
   class app.RequestsController
     # GET /requests.[format]?
-    #
-    # http://wiki.open311.org/GeoReport_v2#GET_Service_Request
-    @index = (req, res) ->
+    @getServiceRequests = (req, res) ->
       socrata = new app.Socrata(res, req)
-      requestOptions = socrata.buildIndexReqOpts(req)
-      socrata.respondWith(requestOptions)
+      sri     = req.query.service_request_id
+      ids     = if sri then sri.split(",") else []
+      opt     = _.omit req.query, "service_request_id"
+      options = socrata.buildRequest(ids, opt)
+      socrata.callWith(options)
 
     # GET /requests/[id].[format]
-    #
-    # Parse the request parameters and send them along to Socrata.
-    #
-    # see: http://wiki.open311.org/GeoReport_v2#GET_Service_Requests
-    # Arguments:
-    #   service_request_id - comma-delimited
-    #   service_code       - [default to all]
-    #   start_date         - earliest, must not be more than 90 days from end_date
-    #   end_date           - latest, must not be more than 90 days from start_date
-    #   status             - comma-delimited ['open','closed']
-    @show = (req, res) ->
+    @getServiceRequest = (req, res) ->
       socrata = new app.Socrata(res, req)
-      requestOptions = socrata.buildShowReqOpts(req)
-      socrata.respondWith(requestOptions)
+      ids     = [req.params.uid]
+      options = socrata.buildRequest(ids)
+      socrata.callWith(options)

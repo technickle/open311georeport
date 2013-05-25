@@ -3,8 +3,7 @@ module.exports = (app) ->
 
     # GET /
     @index = (req, res) ->
-      res.render 'index',
-        view: 'index'
+      res.render 'index', view: 'index'
 
     # GET /discovery.[format]
     # http://wiki.open311.org/Service_Discovery
